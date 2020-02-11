@@ -20,12 +20,13 @@ namespace GradeBook.GradeBooks
                 throw new InvalidOperationException($"Ranked grading requires a minimum of 5 students to work. This gradebook has {totalStudents} students.");
             }
 
-            var studentBoundary = (int) Math.Floor(totalStudents * 0.2);
+            var studentBoundary = (int) Math.Ceiling(totalStudents * 0.2);
+            var orderedGrades = Students.OrderByDescending(s => s.AverageGrade);
 
-            var aGradeScore = Students.OrderByDescending(s => s.AverageGrade).ElementAt(studentBoundary).AverageGrade;
-            var bGradeScore = Students.OrderByDescending(s => s.AverageGrade).ElementAt(studentBoundary*2).AverageGrade;
-            var cGradeScore = Students.OrderByDescending(s => s.AverageGrade).ElementAt(studentBoundary*3).AverageGrade;
-            var dGradeScore = Students.OrderByDescending(s => s.AverageGrade).ElementAt(studentBoundary*4).AverageGrade;
+            var aGradeScore = orderedGrades.ElementAt(studentBoundary).AverageGrade;
+            var bGradeScore = orderedGrades.ElementAt(studentBoundary*2).AverageGrade;
+            var cGradeScore = orderedGrades.ElementAt(studentBoundary*3).AverageGrade;
+            var dGradeScore = orderedGrades.ElementAt(studentBoundary*4).AverageGrade;
 
             if (averageGrade > aGradeScore)
             {
@@ -46,6 +47,31 @@ namespace GradeBook.GradeBooks
             else
             {
                 return 'F';
+            }
+        }
+
+        public override void CalculateStatistics()
+        {
+            if (Students.Count < 5)
+            {
+                Console.WriteLine("Ranked grading requires at least 5 students with grades in order to properly calculate a student's overall grade.");
+                return;
+            }
+            else
+            {
+                base.CalculateStatistics();
+            }
+        }
+
+        public override void CalculateStudentStatistics(string name)
+        {
+            if (Students.Count < 5)
+            {
+                Console.WriteLine("Ranked grading requires at least 5 students with grades in order to properly calculate a student's overall grade.");
+            }
+            else
+            {
+                base.CalculateStudentStatistics(name);
             }
         }
     }
